@@ -35,7 +35,6 @@ public class EarthquakeService {
 
     public List<Earthquake> fetchAndStore() {
         try {
-            //fetching raw JSON from usgs
             String response;
             try {
                 response = restTemplate.getForObject(USGS_URL, String.class);
@@ -64,7 +63,6 @@ public class EarthquakeService {
             for (JsonNode feature : features) {
                 JsonNode props = feature.get("properties");
 
-                //skipame ako nema
                 if (props == null) continue;
 
                 JsonNode magNode = props.get("mag");
@@ -73,7 +71,6 @@ public class EarthquakeService {
                 JsonNode titleNode = props.get("title");
                 JsonNode magTypeNode = props.get("magType");
 
-                //skip na nulls
                 if (magNode == null || magNode.isNull()) continue;
                 if (timeNode == null || timeNode.isNull()) continue;
 
@@ -83,7 +80,31 @@ public class EarthquakeService {
                 String magType = magTypeNode != null && !magTypeNode.isNull() ? magTypeNode.asText() : "Unknown";
                 Instant time = Instant.ofEpochMilli(timeNode.asLong());
 
-                earthquakesToSave.add(new Earthquake(magnitude, magType, place, title, time));
+                JsonNode geometry = feature.get("geometry");
+                JsonNode coordinates = geometry != null ? geometry.get("coordinates") : null;
+
+                Double longitude = null;
+                Double latitude = null;
+                Double depth = null;
+
+                if (coordinates != null && coordinates.isArray() && coordinates.size() >= 3) {
+                    longitude = coordinates.get(0).asDouble();
+                    latitude = coordinates.get(1).asDouble();
+                    depth = coordinates.get(2).asDouble();
+                }
+
+                earthquakesToSave.add(
+                        new Earthquake(
+                                magnitude,
+                                magType,
+                                place,
+                                title,
+                                time,
+                                longitude,
+                                latitude,
+                                depth
+                        )
+                );
             }
 
             try {
@@ -107,6 +128,7 @@ public class EarthquakeService {
     public List<Earthquake> getFiltered(Double minMagnitude, String after) {
         List<Earthquake> earthquakeList = repository.findAll();
         Instant afterInstant = null;
+
         if (after != null) {
             try {
                 afterInstant = LocalDateTime.parse(after).toInstant(ZoneOffset.UTC);
@@ -114,7 +136,9 @@ public class EarthquakeService {
                 throw new InvalidDateFormatException();
             }
         }
+
         final Instant afterFinal = afterInstant;
+
         return earthquakeList.stream()
                 .filter(e -> {
                     if (minMagnitude != null && e.getMagnitude() != null) {

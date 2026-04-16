@@ -59,6 +59,9 @@ class EarthquakeServiceIntegrationTest {
                                 "time": 1713225600000,
                                 "title": "M 4.2 - Test City",
                                 "magType": "mb"
+                              },
+                              "geometry": {
+                                "coordinates": [12.34, 56.78, 9.1]
                               }
                             }
                           ]
@@ -74,6 +77,9 @@ class EarthquakeServiceIntegrationTest {
         assertEquals("10km S of Test City", earthquake.getPlace());
         assertEquals("M 4.2 - Test City", earthquake.getTitle());
         assertEquals(Instant.ofEpochMilli(1713225600000L), earthquake.getTime());
+        assertEquals(12.34, earthquake.getLongitude());
+        assertEquals(56.78, earthquake.getLatitude());
+        assertEquals(9.1, earthquake.getDepth());
         verify(repository).deleteAll();
         verify(repository).saveAll(earthquakes);
         server.verify();
@@ -82,8 +88,8 @@ class EarthquakeServiceIntegrationTest {
     @Test
     void getAll_returnsAllEarthquakesFromRepository() {
         List<Earthquake> storedEarthquakes = List.of(
-                new Earthquake(2.5, "ml", "Place A", "Title A", Instant.parse("2024-01-01T00:00:00Z")),
-                new Earthquake(5.1, "mb", "Place B", "Title B", Instant.parse("2024-01-02T00:00:00Z"))
+                new Earthquake(2.5, "ml", "Place A", "Title A", Instant.parse("2024-01-01T00:00:00Z"), 10.0, 20.0, 5.0),
+                new Earthquake(5.1, "mb", "Place B", "Title B", Instant.parse("2024-01-02T00:00:00Z"), 11.0, 21.0, 6.0)
         );
         when(repository.findAll()).thenReturn(storedEarthquakes);
 
@@ -96,9 +102,9 @@ class EarthquakeServiceIntegrationTest {
     @Test
     void getFiltered_appliesMagnitudeAndAfterFilters() {
         List<Earthquake> storedEarthquakes = List.of(
-                new Earthquake(2.5, "ml", "Old Place", "Old", Instant.parse("2024-01-01T00:00:00Z")),
-                new Earthquake(4.0, "mb", "Too Small", "Too Small", Instant.parse("2024-01-03T00:00:00Z")),
-                new Earthquake(5.1, "mb", "Kept Place", "Kept", Instant.parse("2024-01-04T00:00:00Z"))
+                new Earthquake(2.5, "ml", "Old Place", "Old", Instant.parse("2024-01-01T00:00:00Z"), 12.0, 34.0, 4.0),
+                new Earthquake(4.0, "mb", "Too Small", "Too Small", Instant.parse("2024-01-03T00:00:00Z"), 13.0, 35.0, 5.0),
+                new Earthquake(5.1, "mb", "Kept Place", "Kept", Instant.parse("2024-01-04T00:00:00Z"), 14.0, 36.0, 6.0)
         );
         when(repository.findAll()).thenReturn(storedEarthquakes);
 

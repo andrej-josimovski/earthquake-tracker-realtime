@@ -1,6 +1,7 @@
 package com.andrej.earthquake.model;
 
 import jakarta.persistence.*;
+
 import java.time.Instant;
 
 @Entity
@@ -20,34 +21,95 @@ public class Earthquake {
     private String title;
 
     private Instant time;
+    private Double longitude;
+    private Double latitude;
+    private Double depth;
 
     // Constructors
-    public Earthquake() {}
+    public Earthquake() {
+    }
 
-    public Earthquake(Double magnitude, String magType, String place, String title, Instant time) {
+    public Earthquake(Double magnitude, String magType, String place, String title, Instant time, Double longitude, Double latitude, Double depth) {
         this.magnitude = magnitude;
         this.magType = magType;
         this.place = place;
         this.title = title;
         this.time = time;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.depth = depth;
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Double getMagnitude() { return magnitude; }
-    public void setMagnitude(Double magnitude) { this.magnitude = magnitude; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getMagType() { return magType; }
-    public void setMagType(String magType) { this.magType = magType; }
+    public Double getMagnitude() {
+        return magnitude;
+    }
 
-    public String getPlace() { return place; }
-    public void setPlace(String place) { this.place = place; }
+    public void setMagnitude(Double magnitude) {
+        this.magnitude = magnitude;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getMagType() {
+        return magType;
+    }
 
-    public Instant getTime() { return time; }
-    public void setTime(Instant time) { this.time = time; }
+    public void setMagType(String magType) {
+        this.magType = magType;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Instant getTime() {
+        return time;
+    }
+
+    public void setTime(Instant time) {
+        this.time = time;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getDepth() {
+        return depth;
+    }
+
+    public void setDepth(Double depth) {
+        this.depth = depth;
+    }
 }
